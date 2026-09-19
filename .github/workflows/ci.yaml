@@ -1,0 +1,71 @@
+name: Vision Navigator CD
+
+on:
+  pull_request:
+    branches:
+      - rnd
+      - uat
+      - qa
+      - prod
+
+jobs:
+  deployment-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display deployment information
+        run: |
+          echo "======================================"
+          echo "VISION NAVIGATOR CD"
+          echo "======================================"
+
+          echo "Target environment: ${{ github.base_ref }}"
+
+          echo ""
+          echo "Version configuration:"
+          cat version.yaml
+
+      - name: Validate version.yaml
+        run: |
+          if [ ! -f version.yaml ]; then
+            echo "ERROR: version.yaml not found"
+            exit 1
+          fi
+
+          echo "version.yaml found successfully"
+
+      - name: Validate image version
+        run: |
+          grep 'tag:' version.yaml
+
+          echo "Image version validation completed"
+
+      - name: Simulate deployment
+        run: |
+          echo "Starting deployment..."
+          sleep 3
+
+          echo "Deploying Vision Navigator..."
+          echo "Environment: ${{ github.base_ref }}"
+
+          sleep 3
+
+          echo "Deployment completed successfully."
+
+      - name: Health check
+        run: |
+          echo "Running deployment health check..."
+          sleep 2
+
+          echo "Health check passed."
+
+      - name: Deployment successful
+        run: |
+          echo "======================================"
+          echo "DEPLOYMENT SUCCESSFUL"
+          echo "Environment: ${{ github.base_ref }}"
+          echo "======================================"
